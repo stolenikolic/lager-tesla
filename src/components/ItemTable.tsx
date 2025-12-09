@@ -57,6 +57,8 @@ export default function ItemTable({ items }: ItemTableProps) {
     return sortDirection === 'asc' ? comparison : -comparison
   })
 
+  const inStockItems = sortedItems.filter((item) => item.quantity > 0)
+
   return (
     <div className="space-y-4">
       <div className="relative">
@@ -71,12 +73,12 @@ export default function ItemTable({ items }: ItemTableProps) {
       </div>
 
       <div className="block md:hidden space-y-3">
-        {sortedItems.length === 0 ? (
+        {inStockItems.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
             Nema artikala za prikaz
           </div>
         ) : (
-          sortedItems.map((item) => (
+          inStockItems.map((item) => (
             <div
               key={item.id}
               className="bg-white rounded-lg shadow p-4 space-y-3"
@@ -195,7 +197,7 @@ export default function ItemTable({ items }: ItemTableProps) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {sortedItems.length === 0 ? (
+              {inStockItems.length === 0 ? (
                 <tr>
                   <td
                     colSpan={8}
@@ -205,7 +207,7 @@ export default function ItemTable({ items }: ItemTableProps) {
                   </td>
                 </tr>
               ) : (
-                sortedItems.map((item) => (
+                inStockItems.map((item) => (
                   <tr
                     key={item.id}
                     className="hover:bg-gray-50 transition-colors"
