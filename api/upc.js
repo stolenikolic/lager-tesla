@@ -45,7 +45,6 @@ export default async function handler(req, res) {
     return res.status(200).json({
       name: item.title || '',
       imageUrl: item.images?.[0] || '',
-      supplier: item.brand || '',
     })
   } catch (error) {
     console.error('Proxy API error:', error)

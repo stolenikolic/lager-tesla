@@ -371,7 +371,7 @@ export default function AddItemModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nabavna cijena (€) <span className="text-red-500">*</span>
+                Nabavna cijena (KM) <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
