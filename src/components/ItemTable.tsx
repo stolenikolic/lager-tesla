@@ -129,7 +129,8 @@ export default function ItemTable({ items }: ItemTableProps) {
                 <div>
                   <span className="text-gray-500">Cijena:</span>
                   <p className="font-semibold text-gray-900 mt-1">
-                    €{item.purchasePrice.toFixed(2)}
+                    {item.purchasePrice.toFixed(2)} KM
+                    {item.supplier?.toLowerCase().includes('cpu') && ' + PDV'}
                   </p>
                 </div>
               </div>
