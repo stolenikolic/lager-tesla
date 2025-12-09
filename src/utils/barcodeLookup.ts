@@ -57,7 +57,10 @@ interface ProductLookupResult {
 
 export async function lookupProductByBarcode(barcode: string) {
   try {
-    const response = await fetch(`/api/upc?upc=${barcode}`)
+    // const response = await fetch(`/api/upc?upc=${barcode}`)
+    const response = await fetch(
+      `https://lager-tesla.vercel.app/api/upc?upc=${barcode}`
+    )
 
     if (!response.ok) {
       return null
