@@ -57,22 +57,14 @@ interface ProductLookupResult {
 
 export async function lookupProductByBarcode(barcode: string) {
   try {
-    const response = await fetch(
-      `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`
-    )
-    const data = await response.json()
+    const response = await fetch(`/api/upc?upc=${barcode}`)
 
-    if (!data.items || data.items.length === 0) {
+    if (!response.ok) {
       return null
     }
 
-    const item = data.items[0]
-
-    return {
-      name: item.title || '',
-      imageUrl: item.images?.[0] || '',
-      supplier: item.brand || '',
-    }
+    const data = await response.json()
+    return data
   } catch (error) {
     console.error('Barcode lookup error:', error)
     return null
