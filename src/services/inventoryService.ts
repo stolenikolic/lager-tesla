@@ -11,11 +11,11 @@ const defaultCategories: Category[] = [
 ]
 
 const defaultSubcategories: Subcategory[] = [
-  { id: 'sub-1', name: 'CPU', categoryId: 'cat-1' },
-  { id: 'sub-2', name: 'MBO', categoryId: 'cat-1' },
-  { id: 'sub-3', name: 'RAM', categoryId: 'cat-1' },
-  { id: 'sub-4', name: 'PSU', categoryId: 'cat-1' },
-  { id: 'sub-5', name: 'GPU', categoryId: 'cat-1' },
+  { id: 'sub-1', name: 'Procesori', categoryId: 'cat-1' },
+  { id: 'sub-2', name: 'Maticne ploce', categoryId: 'cat-1' },
+  { id: 'sub-3', name: 'RAM memorije', categoryId: 'cat-1' },
+  { id: 'sub-4', name: 'Napajanja', categoryId: 'cat-1' },
+  { id: 'sub-5', name: 'Graficke kartice', categoryId: 'cat-1' },
   { id: 'sub-6', name: 'SSD', categoryId: 'cat-1' },
   { id: 'sub-7', name: 'HDD', categoryId: 'cat-1' },
   { id: 'sub-8', name: 'Miševi', categoryId: 'cat-2' },
