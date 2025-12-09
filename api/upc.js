@@ -1,7 +1,27 @@
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET')
+  const allowedOrigins = [
+    'https://lager-tesla.vercel.app',
+    'https://lager-tesla.netlify.app',
+    'http://localhost:5173',
+  ]
+
+  const origin = req.headers.origin
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+  } else {
+    res.setHeader(
+      'Access-Control-Allow-Origin',
+      'https://lager-tesla.vercel.app'
+    )
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+  // OPTIONS preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
 
   const { upc } = req.query
 
