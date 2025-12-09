@@ -25,6 +25,7 @@ function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [decrementBarcode, setDecrementBarcode] = useState('')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isOpenMobile, setIsOpenMobile] = useState(false)
 
   const categories = getCategories()
   const subcategories = getSubcategories()
@@ -137,28 +138,50 @@ function App() {
             </div>
 
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
-                <Minus className="w-5 h-5 text-gray-600 hidden sm:block flex-shrink-0" />
-                <div className="flex-1 w-full">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Skeniraj barkod za skidanje sa lagera
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <input
-                      type="text"
-                      value={decrementBarcode}
-                      onChange={(e) => setDecrementBarcode(e.target.value)}
-                      onKeyDown={handleDecrementBarcodeKeyDown}
-                      placeholder="Skenirajte barkod"
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base min-h-[44px]"
-                    />
-                    <button
-                      onClick={handleDecrementStock}
-                      disabled={!decrementBarcode.trim()}
-                      className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors min-h-[44px] whitespace-nowrap"
-                    >
-                      Smanji stanje
-                    </button>
+              {/* Header sa toggle dugmetom, pojavljuje se samo na mobilnom */}
+              <div className="flex justify-between items-center md:hidden">
+                <p className="font-semibold text-gray-700">
+                  Skidanje sa lagera
+                </p>
+                <button
+                  onClick={() => setIsOpenMobile(!isOpenMobile)}
+                  className="text-sm text-blue-600 font-medium"
+                >
+                  {isOpenMobile ? 'Sakrij' : 'Prikaži'}
+                </button>
+              </div>
+
+              {/* Sadržaj */}
+              <div
+                className={`${isOpenMobile ? 'block' : 'hidden'} md:block mt-2`}
+              >
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                  <Minus className="w-5 h-5 text-gray-600 hidden sm:block flex-shrink-0" />
+                  <div className="flex-1 w-full">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Skeniraj barkod za skidanje sa lagera
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        value={decrementBarcode}
+                        onChange={(e) => setDecrementBarcode(e.target.value)}
+                        onKeyDown={handleDecrementBarcodeKeyDown}
+                        placeholder="Skenirajte barkod"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg 
+            focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+            text-base min-h-[44px]"
+                      />
+                      <button
+                        onClick={handleDecrementStock}
+                        disabled={!decrementBarcode.trim()}
+                        className="px-4 py-3 bg-red-600 text-white rounded-lg 
+            hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed 
+            transition-colors min-h-[44px] whitespace-nowrap"
+                      >
+                        Smanji stanje
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
