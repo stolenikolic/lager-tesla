@@ -38,9 +38,9 @@ function App() {
     filterItems()
   }, [items, selectedCategoryId, selectedSubcategoryId])
 
-  const loadItems = () => {
-    const allItems = getItems()
-    setItems(allItems)
+  async function loadItems() {
+    const data = await getItems()
+    setItems(data)
   }
 
   const filterItems = () => {
@@ -68,14 +68,14 @@ function App() {
     }
   }
 
-  const handleDecrementStock = () => {
+  const handleDecrementStock = async () => {
     const barcode = decrementBarcode.trim()
     if (!barcode) {
       showToast('Unesite barkod', 'error')
       return
     }
 
-    const result = decrementItemQuantityByBarcode(barcode)
+    const result = await decrementItemQuantityByBarcode(decrementBarcode)
 
     if (result.success) {
       showToast(result.message, 'success')
@@ -85,7 +85,6 @@ function App() {
       showToast(result.message, 'error')
     }
   }
-
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {isSidebarOpen && (
@@ -124,7 +123,7 @@ function App() {
                 </button>
                 <Package className="w-6 h-6 md:w-8 md:h-8 text-gray-700 flex-shrink-0" />
                 <h1 className="text-lg md:text-2xl lg:text-3xl font-bold text-gray-900 truncate">
-                  Lager Telsa
+                  Lager Tesla
                 </h1>
               </div>
               <button

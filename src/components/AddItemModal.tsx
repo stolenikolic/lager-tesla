@@ -90,25 +90,24 @@ export default function AddItemModal({
       return
     }
 
-    const existingItem = findItemByBarcode(barcode)
+    // prvo probaj da nađeš u bazi
+    const existingItem = await findItemByBarcode(barcode)
     if (existingItem) {
-      // Popuni formu podacima iz postojećeg artikla
-      setFormData({
-        barcode: existingItem.barcode,
+      setFormData((prev) => ({
+        ...prev,
         name: existingItem.name,
         supplier: existingItem.supplier,
         imageUrl: existingItem.imageUrl,
         purchasePrice: existingItem.purchasePrice.toString(),
-        quantity: '1', // default dodajemo 1 kom, ti možeš promijeniti
+        quantity: '1',
         categoryId: existingItem.categoryId,
         subcategoryId: existingItem.subcategoryId,
-      })
-
-      setErrors({})
-      showToast('Artikal je već u lageru – podaci su popunjeni', 'info')
+      }))
+      showToast('Artikal već postoji – podaci su učitani iz baze', 'success')
       return
     }
 
+    // ako nema u bazi, koristi UPC lookup
     setIsFetchingBarcode(true)
     try {
       const result = await lookupProductByBarcode(barcode)
@@ -116,14 +115,15 @@ export default function AddItemModal({
         setFormData((prev) => ({
           ...prev,
           name: result.name,
-          supplier: result.supplier,
+          // supplier ostavi prazno ili ga user popunjava ručno
           imageUrl: result.imageUrl,
         }))
-        showToast('Podaci preuzeti', 'success')
+        showToast('Podaci preuzeti sa UPC servisa', 'success')
       } else {
         showToast('Nije moguće preuzeti podatke za ovaj barkod', 'error')
       }
     } catch (error) {
+      console.error(error)
       showToast('Greška prilikom preuzimanja podataka', 'error')
     } finally {
       setIsFetchingBarcode(false)
@@ -176,7 +176,7 @@ export default function AddItemModal({
       const barcode = formData.barcode.trim()
       const quantityToAdd = parseInt(formData.quantity || '1', 10) || 1
 
-      const existingItem = findItemByBarcode(barcode)
+      const existingItem = await findItemByBarcode(barcode)
 
       if (existingItem) {
         // Ažuriramo postojeći artikal
@@ -191,12 +191,19 @@ export default function AddItemModal({
           quantity: existingItem.quantity + quantityToAdd,
         }
 
-        updateItem(updatedItem)
+        const success = await updateItem(updatedItem)
 
-        showToast(
-          `Dodano ${quantityToAdd} kom. Nova količina: ${updatedItem.quantity}`,
-          'success'
-        )
+        if (success) {
+          showToast(
+            `Dodano ${quantityToAdd} kom. Nova količina: ${updatedItem.quantity}`,
+            'success'
+          )
+          await onItemAdded() // povlači nove podatke iz supabase
+          handleClose()
+        } else {
+          showToast('Greška pri ažuriranju artikla', 'error')
+        }
+        return
 
         onItemAdded()
         handleClose()
@@ -204,24 +211,29 @@ export default function AddItemModal({
       }
 
       // Ako ne postoji – pravimo novi artikal
-      const newItem: Item = {
-        id: `item-${Date.now()}-${Math.random().toString(36).substring(7)}`,
-        barcode,
+      const newItem: Omit<Item, 'id'> = {
+        barcode: formData.barcode.trim(),
         name: formData.name.trim(),
         supplier: formData.supplier.trim(),
         imageUrl: formData.imageUrl.trim(),
         purchasePrice: parseFloat(formData.purchasePrice),
-        quantity: quantityToAdd,
+        quantity: parseInt(formData.quantity, 10),
         categoryId: formData.categoryId,
         subcategoryId: formData.subcategoryId,
         createdAt: new Date().toISOString(),
       }
 
-      addItem(newItem)
-      showToast('Artikal uspješno dodat', 'success')
-      onItemAdded()
-      handleClose()
+      const success = await addItem(newItem)
+
+      if (success) {
+        showToast('Artikal uspješno dodat', 'success')
+        onItemAdded()
+        handleClose()
+      } else {
+        showToast('Greška prilikom dodavanja artikla u bazu', 'error')
+      }
     } catch (error) {
+      console.error(error)
       showToast('Greška prilikom dodavanja artikla', 'error')
     } finally {
       setIsLoading(false)
